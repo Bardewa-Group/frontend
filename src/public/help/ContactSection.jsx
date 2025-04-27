@@ -75,7 +75,7 @@ const ContactSection = () => {
                     textAlign="center"
                     mt={4}
                 >
-                    Or email us directly at <strong>support@hirepro.com</strong>
+                    Or email us directly at <strong>support@HireHub.com</strong>
                 </Typography>
             </Container>
         </Box>

@@ -88,7 +88,7 @@ const HelpSection = () => {
                         </AccordionSummary>
                         <AccordionDetails>
                             <Typography color="text.secondary">
-                                You can reach us through the "Contact Us" form below or by emailing support@hirepro.com.
+                                You can reach us through the "Contact Us" form below or by emailing support@HireHub.com.
                             </Typography>
                         </AccordionDetails>
                     </Accordion>

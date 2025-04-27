@@ -21,7 +21,7 @@ const FooterSection = () => {
                 >
                     {/* Left: CopyRight */}
                     <Typography variant="body2" color="text.secondary">
-                        © {new Date().getFullYear()} HirePro. All rights reserved.
+                        © {new Date().getFullYear()} HireHub. All rights reserved.
                     </Typography>
 
                     {/* Right: Minimal Links (optional future) */}

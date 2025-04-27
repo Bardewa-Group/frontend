@@ -21,7 +21,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
     const rightSection = () => {
         return (
-            <Tooltip title={"HirePro"}>
+            <Tooltip title={"HireHub"}>
 
                 <Box
                     sx={{

@@ -29,7 +29,7 @@ const HeroSection = () => {
                         sx={{ cursor: "pointer" }}
                         onClick={() => navigate('/')}
                     >
-                        HirePro
+                        HireHub
                     </Typography>
 
                     <Stack direction="row" spacing={3} alignItems="center">

@@ -91,7 +91,7 @@ const Login = () => {
                         </Box>
 
                         <Typography variant="h5" fontWeight="bold" textAlign="center" color="primary">
-                            Sign In to HirePro
+                            Sign In to HireHub
                         </Typography>
                         <Typography variant="h6" textAlign="center" color="secondary" sx={{ mb: 2 }}>
                             Join Now
@@ -163,7 +163,7 @@ const Login = () => {
                         </Tooltip>
 
                         <Typography align="center" sx={{ mt: 3, color: 'primary.main' }}>
-                            New to HirePro?{' '}
+                            New to HireHub?{' '}
                             <span onClick={() => setOpen(true)} style={{ cursor: 'pointer', fontWeight: 'bold' }}>
                                 Sign Up
                             </span>
