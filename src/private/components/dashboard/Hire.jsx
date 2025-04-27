@@ -51,7 +51,7 @@ const Hire = () => {
             axios.get(config.hire_requested_list, authConfig),
         ])
             .then(([workersRes, reqRes]) => {
-                const allWorkers = workersRes.data;
+                const allWorkers = workersRes.data.filter(worker => worker.profession.trim() !== ""); // Only workers with profession
                 const allRequests = reqRes.data;
                 setWorkers(allWorkers);
                 setRequests(allRequests);
