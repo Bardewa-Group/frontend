@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { toast } from 'react-toastify';
 
 
-const baseURL = "http://localhost:8000";
+// const baseURL = "http://localhost:8000";
+const baseURL = "https://dfasdfds.pythonanywhere.com/";
 
 
 
