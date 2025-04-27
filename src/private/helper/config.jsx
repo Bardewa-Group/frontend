@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { toast } from 'react-toastify';
 
 
-// const baseURL = "http://localhost:8000";
-const baseURL = "https://dfasdfds.pythonanywhere.com/";
+// export const baseURL = "http://localhost:8000";
+export const baseURL = "https://dfasdfds.pythonanywhere.com/";
 
 
 
@@ -21,17 +21,17 @@ export const config = {
 
   get_qualifications: `${baseURL}/api/worker/profile/`,
   get_reviews: `${baseURL}/api/worker/reviews/`,
-  
+
   // hire urls
   view_workers: `${baseURL}/api/hire/workers/`,
   request_workers: `${baseURL}/api/hire/requests/`,
   hire_accepted_list: `${baseURL}/api/hire/requests/accepted/`,
   hire_requested_list: `${baseURL}/api/hire/requests/pending/`,
-  
+
   request_to_me: `${baseURL}/api/worker/requests/`,
   hire_request_pay: (id) => `${baseURL}/api/hire/requests/${id}/pay/`,
   complete_hire: (id) => `${baseURL}/api/hire/requests/${id}/complete/`,
-  review_hire:    (id) => `${baseURL}/api/hire/requests/${id}/review/`,
+  review_hire: (id) => `${baseURL}/api/hire/requests/${id}/review/`,
   get_worker_review: `${baseURL}/api/worker/reviews/by-id/`,
 
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -7,147 +7,196 @@ import {
     Button,
     Typography,
     Stack,
-    Divider,
-    TextField,
     CircularProgress,
-    Box,
 } from '@mui/material';
-import { displayError } from '../../helper/config';
+import { baseURL, config, displayError } from '../../helper/config';
+import CryptoJS from "crypto-js";
+import { v4 as uuidv4 } from "uuid";
 
-const PayConfirmModal = ({ open, onClose, onConfirm, price, username }) => {
-    const [txnId, setTxnId] = useState('');
+
+const PayConfirmModal = ({ open, onClose, price, onConfirm }) => {
     const [paying, setPaying] = useState(false);
 
-    const payAmount = (price * 0.1).toFixed(2);
-    const esewaNumber = "9816710346"; // your real eSewa number here
-    const qrImageLink = "https://your-qr-code-link.com"; // optional: your QR image here
+    const newUrl = window.location.origin + window.location.pathname;
 
-    const handleConfirmPayment = async () => {
-        if (!txnId) {
-            displayError("Please enter your Transaction ID after payment.");
+    const [formData, setFormData] = useState({
+        amount: (price * 0.1).toFixed(2),
+        tax_amount: "0",
+        total_amount: (price * 0.1).toFixed(2),
+        transaction_uuid: uuidv4(),
+        product_service_charge: "0",
+        product_delivery_charge: "0",
+        product_code: "EPAYTEST",
+        success_url: newUrl,
+        failure_url: newUrl,
+        signed_field_names: "total_amount,transaction_uuid,product_code",
+        signature: "",
+        secret: "8gBm/:&EnhH.1/q", // Test secret key
+    });
+
+    const formRef = useRef(null);
+
+    const generateSignature = (total_amount, transaction_uuid, product_code, secret) => {
+        const hashString = `total_amount=${total_amount},transaction_uuid=${transaction_uuid},product_code=${product_code}`;
+        const hash = CryptoJS.HmacSHA256(hashString, secret);
+        return CryptoJS.enc.Base64.stringify(hash);
+    };
+
+    useEffect(() => {
+        const { total_amount, transaction_uuid, product_code, secret } = formData;
+        const hashedSignature = generateSignature(total_amount, transaction_uuid, product_code, secret);
+        setFormData(prev => ({ ...prev, signature: hashedSignature }));
+    }, [formData.total_amount, formData.transaction_uuid, formData.product_code]);
+
+    const handlePayment = () => {
+        if (!formData.signature) {
+            displayError("Something went wrong generating signature.");
             return;
         }
 
         setPaying(true);
 
-        try {
-            const payAmount = (price * 0.1).toFixed(2); // Same 10% advance
-            const pid = "ORDER-" + new Date().getTime(); // Generate unique product id
-            const scd = "EPAYTEST"; // Change to your real Merchant Code in production
-            const url = "https://uat.esewa.com.np/epay/transrec"; // For TEST, change to https://esewa.com.np/epay/transrec for LIVE
+        // Create a new form dynamically
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "https://rc-epay.esewa.com.np/api/epay/main/v2/form"; // or rc-epay if testing
 
-            const formData = new URLSearchParams();
-            formData.append('amt', payAmount);
-            formData.append('rid', txnId);
-            formData.append('pid', pid);
-            formData.append('scd', scd);
+        const addInput = (name, value) => {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
+        };
 
-            const response = await fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: formData.toString(),
-            });
+        // Add all required fields
+        addInput("amount", formData.amount);
+        addInput("tax_amount", formData.tax_amount);
+        addInput("total_amount", formData.total_amount);
+        addInput("transaction_uuid", formData.transaction_uuid);
+        addInput("product_service_charge", formData.product_service_charge);
+        addInput("product_delivery_charge", formData.product_delivery_charge);
+        addInput("product_code", formData.product_code);
+        addInput("success_url", formData.success_url);
+        addInput("failure_url", formData.failure_url);
+        addInput("signed_field_names", formData.signed_field_names);
+        addInput("signature", formData.signature);
 
-            const text = await response.text();
+        // Attach and submit
+        document.body.appendChild(form);
+        form.submit();
 
-            if (text.includes("Success")) {
-                // Valid Transaction
-                setPaying(false);
-                onConfirm(); // Pass txnId if needed
-            } else {
-                // Invalid Transaction
-                setPaying(false);
-                displayError("Payment verification failed. Please check your Transaction ID and try again.");
-            }
-        } catch (error) {
-            setPaying(false);
-            displayError("Network error while verifying payment.");
-        } finally {
-            onConfirm(); // Pass txnId if needed
-        }
+        // Clean up
+        document.body.removeChild(form);
+
+        setPaying(false);
     };
 
+    useEffect(() => {
+        // Check for payment response in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const dataParam = urlParams.get('data');
+        if (dataParam) {
+            try {
+                const decodedData = JSON.parse(
+                    atob(dataParam)
+                );
+                if (decodedData.status === 'COMPLETE') {
+                    onConfirm()
+                    const newUrl = window.location.origin + window.location.pathname;
+                    window.history.replaceState({}, document.title, newUrl);
+                } else {
+                    console.log('failure');
+                }
+            } catch (error) {
+                console.error('Error parsing payment response:', error);
+                console.log('failure');
+            }
+        }
+    }, []);
 
     return (
-        <Dialog
-            open={open}
-            onClose={onClose}
-            fullWidth
-            maxWidth="xs"
-            sx={{ backdropFilter: "blur(2px)" }}
-        >
-            <DialogTitle
-                sx={{
-                    fontWeight: 700,
-                    fontSize: '1.25rem',
-                    textAlign: 'center',
-                }}
+        <>
+            <Dialog
+                open={open}
+                onClose={onClose}
+                fullWidth
+                maxWidth="xs"
+                sx={{ backdropFilter: "blur(2px)" }}
             >
-                Pay Advance with eSewa
-            </DialogTitle>
+                <DialogTitle
+                    sx={{
+                        fontWeight: 700,
+                        fontSize: '1.25rem',
+                        textAlign: 'center',
+                    }}
+                >
+                    Pay Advance with eSewa
+                </DialogTitle>
 
-            <DialogContent sx={{ p: 3 }}>
-                <Stack spacing={3} alignItems="center">
+                <DialogContent sx={{ p: 3 }}>
+                    <Stack spacing={3} alignItems="center">
+                        <Typography variant="body2" color="text.secondary">
+                            Advance Payment Amount:
+                        </Typography>
 
-                    <Typography variant="body2" color="text.secondary">
-                        Send <strong>NPR {payAmount}</strong> to
-                    </Typography>
+                        <Typography variant="h5" fontWeight={700} color="primary">
+                            NPR {formData.amount}
+                        </Typography>
 
-                    <Typography variant="h5" fontWeight={700} color="primary">
-                        {esewaNumber}
-                    </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            Click Pay Now to proceed with secure payment via eSewa.
+                        </Typography>
+                    </Stack>
+                </DialogContent>
 
-                    {/* QR CODE optional */}
-                    <Box
-                        component="img"
-                        src={qrImageLink}
-                        alt="eSewa QR"
-                        sx={{ width: 120, height: 120, borderRadius: 2, mt: 1 }}
-                    />
+                <DialogActions sx={{ justifyContent: 'center', pb: 3 }}>
+                    <Stack direction="row" spacing={2} width="100%" px={2}>
+                        <Button
+                            onClick={onClose}
+                            fullWidth
+                            variant="outlined"
+                            size="medium"
+                            disabled={paying}
+                            sx={{ fontWeight: 600, textTransform: 'none' }}
+                        >
+                            Cancel
+                        </Button>
 
-                    <Divider sx={{ width: '100%', my: 2 }} />
+                        <Button
+                            onClick={handlePayment}
+                            fullWidth
+                            variant="contained"
+                            size="medium"
+                            disabled={paying}
+                            sx={{ fontWeight: 600, textTransform: 'none' }}
+                        >
+                            {paying ? <CircularProgress size={24} color="inherit" /> : "Pay Now"}
+                        </Button>
+                    </Stack>
+                </DialogActions>
+            </Dialog>
 
-                    {/* Transaction ID input */}
-                    <TextField
-                        label="Enter eSewa Transaction ID"
-                        value={txnId}
-                        onChange={(e) => setTxnId(e.target.value)}
-                        fullWidth
-                    />
-
-                    {/* Optional: Upload screenshot feature here later */}
-
-                </Stack>
-            </DialogContent>
-
-            <DialogActions sx={{ justifyContent: 'center', pb: 3 }}>
-                <Stack direction="row" spacing={2} width="100%" px={2}>
-                    <Button
-                        onClick={onClose}
-                        fullWidth
-                        variant="outlined"
-                        size="medium"
-                        disabled={paying}
-                        sx={{ fontWeight: 600, textTransform: 'none' }}
-                    >
-                        Cancel
-                    </Button>
-
-                    <Button
-                        onClick={handleConfirmPayment}
-                        fullWidth
-                        variant="contained"
-                        size="medium"
-                        disabled={paying}
-                        sx={{ fontWeight: 600, textTransform: 'none' }}
-                    >
-                        {paying ? <CircularProgress size={24} color="inherit" /> : "Confirm Payment"}
-                    </Button>
-                </Stack>
-            </DialogActions>
-        </Dialog>
+            {/* Hidden Form to auto-submit */}
+            <form
+                ref={formRef}
+                action="https://rc-epay.esewa.com.np/api/epay/main/v2/form"
+                method="POST"
+                style={{ display: 'none' }}
+            >
+                <input type="hidden" name="amount" value={formData.amount} />
+                <input type="hidden" name="tax_amount" value={formData.tax_amount} />
+                <input type="hidden" name="total_amount" value={formData.total_amount} />
+                <input type="hidden" name="transaction_uuid" value={formData.transaction_uuid} />
+                <input type="hidden" name="product_service_charge" value={formData.product_service_charge} />
+                <input type="hidden" name="product_delivery_charge" value={formData.product_delivery_charge} />
+                <input type="hidden" name="product_code" value={formData.product_code} />
+                <input type="hidden" name="success_url" value={formData.success_url} />
+                <input type="hidden" name="failure_url" value={formData.failure_url} />
+                <input type="hidden" name="signed_field_names" value={formData.signed_field_names} />
+                <input type="hidden" name="signature" value={formData.signature} />
+            </form>
+        </>
     );
 };
 

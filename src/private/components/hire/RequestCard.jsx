@@ -43,6 +43,7 @@ export const RequestCard = ({
 
     const confirmPayment = async () => {
         try {
+            console.log("sucess")
             await handlePay(req.id);
         } catch (error) {
             console.error(error);
