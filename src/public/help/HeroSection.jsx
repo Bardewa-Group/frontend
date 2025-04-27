@@ -1,24 +1,103 @@
-import { Box, Container, Typography, Button, Stack } from "@mui/material";
+import { Box, Container, Typography, Button, Stack, AppBar, Toolbar, IconButton, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-scroll";
+
 
 const HeroSection = () => {
     const navigate = useNavigate();
+    const theme = useTheme();
 
     return (
         <Box
             sx={{
                 minHeight: "100vh",
                 display: "flex",
-                alignItems: "center",
+                flexDirection: "column",
                 bgcolor: "linear-gradient(135deg, #f0f4f8, #ffffff)",
-                px: { xs: 3, md: 8 },
-                py: { xs: 8, md: 12 },
                 backgroundImage: `url(https://www.transparenttextures.com/patterns/cubes.png)`,
                 backgroundRepeat: 'repeat',
                 backgroundSize: 'auto',
             }}
         >
-            <Container maxWidth="lg">
+            {/* Navbar */}
+            <AppBar position="static" color="transparent" elevation={0} sx={{ p: 2 }}>
+                <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+                    <Typography
+                        variant="h6"
+                        fontWeight="bold"
+                        color="primary"
+                        sx={{ cursor: "pointer" }}
+                        onClick={() => navigate('/')}
+                    >
+                        HirePro
+                    </Typography>
+
+                    <Stack direction="row" spacing={3} alignItems="center">
+                        <Link
+                            to="professions"
+                            smooth={true}
+                            duration={500}
+                            offset={-70}
+                            style={{ cursor: "pointer", fontWeight: 600, color: theme.palette.text.primary, textDecoration: "none" }}
+                        >
+                            Professions
+                        </Link>
+
+                        <Link
+                            to="howitworks"
+                            smooth={true}
+                            duration={500}
+                            offset={-70}
+                            style={{ cursor: "pointer", fontWeight: 600, color: theme.palette.text.primary, textDecoration: "none" }}
+                        >
+                            How It Works
+                        </Link>
+
+                        <Link
+                            to="help"
+                            smooth={true}
+                            duration={500}
+                            offset={-70}
+                            style={{ cursor: "pointer", fontWeight: 600, color: theme.palette.text.primary, textDecoration: "none" }}
+                        >
+                            Help
+                        </Link>
+
+                        <Link
+                            to="contact"
+                            smooth={true}
+                            duration={500}
+                            offset={-70}
+                            style={{ cursor: "pointer", fontWeight: 600, color: theme.palette.text.primary, textDecoration: "none" }}
+                        >
+                            Contact
+                        </Link>
+
+
+                        <Button
+                            variant="outlined"
+                            size="small"
+                            sx={{
+                                fontWeight: 700,
+                                borderRadius: 2,
+                                textTransform: "none",
+                                borderColor: "primary.main",
+                                color: "primary.main",
+                                "&:hover": {
+                                    borderColor: "primary.dark",
+                                    color: "primary.dark",
+                                },
+                            }}
+                            onClick={() => navigate("/login")}
+                        >
+                            Login
+                        </Button>
+                    </Stack>
+                </Toolbar>
+            </AppBar>
+
+            {/* Hero Section */}
+            <Container maxWidth="lg" sx={{ flex: 1, display: "flex", alignItems: "center" }}>
                 <Stack
                     direction={{ xs: "column", md: "row" }}
                     spacing={8}
@@ -97,7 +176,7 @@ const HeroSection = () => {
                         </Stack>
                     </Box>
 
-                    {/* (Optional) Right Section - Hero Image */}
+                    {/* Hero Image Section */}
                     <Box
                         flex={1}
                         display="flex"

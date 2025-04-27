@@ -26,6 +26,8 @@ import { ColorModeContext } from "../ThemeContext/ThemeContext";
 import Signup from "./Signup";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import HomeIcon from '@mui/icons-material/Home';
+
 
 const Login = () => {
     const { login } = useAuth();
@@ -70,9 +72,18 @@ const Login = () => {
                     padding: { xs: 2, sm: 4 },
                     position: 'relative',
                 }}>
-                    <IconButton onClick={colorMode.toggleColorMode} sx={{ position: "absolute", top: 20, right: 20 }}>
-                        {theme.palette.mode === 'light' ? <DarkMode /> : <LightMode />}
-                    </IconButton>
+                    <Box sx={{ position: "absolute", top: 20, right: 20, display: 'flex', gap: 1 }}>
+                        <IconButton onClick={colorMode.toggleColorMode}>
+                            {theme.palette.mode === 'light' ? <DarkMode /> : <LightMode />}
+                        </IconButton>
+                        <IconButton onClick={() => navigate('/')}>
+                            <HomeIcon />
+                        </IconButton>
+                    </Box>
+
+
+
+
 
                     <Container maxWidth="xs" sx={{ p: 4, borderRadius: 3, bgcolor: 'background.paper' }}>
                         <Box sx={{ textAlign: 'center', mb: 2 }}>
@@ -157,6 +168,7 @@ const Login = () => {
                                 Sign Up
                             </span>
                         </Typography>
+
                     </Container>
                 </Grid>
 
