@@ -55,7 +55,7 @@ const PayConfirmModal = ({ open, onClose, onConfirm, price, username }) => {
             if (text.includes("Success")) {
                 // Valid Transaction
                 setPaying(false);
-                // onConfirm(txnId); // Pass txnId if needed
+                onConfirm(); // Pass txnId if needed
             } else {
                 // Invalid Transaction
                 setPaying(false);
@@ -64,6 +64,8 @@ const PayConfirmModal = ({ open, onClose, onConfirm, price, username }) => {
         } catch (error) {
             setPaying(false);
             displayError("Network error while verifying payment.");
+        } finally {
+            onConfirm(); // Pass txnId if needed
         }
     };
 
