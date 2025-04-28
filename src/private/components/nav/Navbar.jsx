@@ -39,7 +39,6 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
     const [notifications, setNotifications] = useState([]);
     const [newNotificationCount, setNewNotificationCount] = useState(0);
-    const [seenNotificationIds, setSeenNotificationIds] = useState(new Set());
     const [anchorEl, setAnchorEl] = useState(null);
 
     const open = Boolean(anchorEl);
@@ -50,7 +49,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
         // 1. First Load seenNotificationIds
         const stored = JSON.parse(localStorage.getItem('seenNotifications') || "[]");
         const seenIdsSet = new Set(stored);
-        setSeenNotificationIds(seenIdsSet);
+        
 
         // 2. Then call fetch after slight delay (to ensure state updates)
         setTimeout(() => {
@@ -101,7 +100,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
         // When opening dropdown → mark all notifications as seen
         const allIds = notifications.map(item => item.id);
         localStorage.setItem('seenNotifications', JSON.stringify(allIds));
-        setSeenNotificationIds(new Set(allIds));
+        
         setNewNotificationCount(0);
     };
 
