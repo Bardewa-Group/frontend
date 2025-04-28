@@ -34,6 +34,15 @@ const HeroSection = () => {
 
                     <Stack direction="row" spacing={3} alignItems="center">
                         <Link
+                            to="about"
+                            smooth={true}
+                            duration={500}
+                            offset={-70}
+                            style={{ cursor: "pointer", fontWeight: 600, color: theme.palette.text.primary, textDecoration: "none" }}
+                        >
+                            About Us
+                        </Link>
+                        <Link
                             to="professions"
                             smooth={true}
                             duration={500}

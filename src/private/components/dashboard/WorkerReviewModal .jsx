@@ -65,11 +65,12 @@ const WorkerReviewModal = ({ open, onClose, worker }) => {
 
                             <Stack direction="row" spacing={2} mt={1}>
                                 <Typography variant="body2" color="text.secondary">
-                                    <strong>Hourly Rate:</strong> ${worker.hourly_rate}/hr
+                                    <strong>Rate:</strong> {worker.hourly_rate} <Typography component="span" variant="caption">NPR/hr</Typography>
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
                                     <strong>Experience:</strong> {worker.experience_years} year{worker.experience_years > 1 ? 's' : ''}
                                 </Typography>
+
                             </Stack>
                         </Stack>
                     </Paper>
@@ -137,7 +138,7 @@ const WorkerReviewModal = ({ open, onClose, worker }) => {
                                                     </Grid>
                                                     <Grid item xs={12} sm={4}>
                                                         <Typography variant="body2" color="text.secondary">
-                                                            <strong>Hourly Rate:</strong> ${review.hire_request.hourly_rate}
+                                                            <strong>Hourly Rate:</strong> {worker.hourly_rate} <Typography component="span" variant="caption">NPR/hr</Typography>
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>

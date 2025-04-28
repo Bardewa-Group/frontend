@@ -75,14 +75,15 @@ export const WorkerCard = ({ worker, status, handleRequest }) => {
                         >
                             {/* left: rate & experience */}
                             <Box>
-                                <Typography variant="body2">
-                                    <strong>Rate:</strong> ${worker.hourly_rate}/hr
+                                <Typography variant="body2" sx={{ mb: 0.5 }}>
+                                    <strong>Rate:</strong> {worker.hourly_rate} <Typography component="span" variant="caption">NPR/hr</Typography>
                                 </Typography>
                                 <Typography variant="body2">
-                                    <strong>Experience:</strong> {worker.experience_years} yr
-                                    {worker.experience_years > 1 ? "s" : ""}
+                                    <strong>Experience:</strong> {worker.experience_years} year{worker.experience_years > 1 ? "s" : ""}
                                 </Typography>
                             </Box>
+
+
 
                             {/* right: status chip or request button */}
                             <Box>

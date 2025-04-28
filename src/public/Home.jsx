@@ -7,12 +7,17 @@ import HelpSection from "./help/HelpSection";  // New
 import ContactSection from "./help/ContactSection";  // New
 import FooterSection from "./help/FooterSection";
 import ScrollToTopButton from "./help/ScrollToTopButton";  // Adjust the path if needed
+import AboutSection from "./help/AboutSection";
 
 const Home = () => {
     return (
         <Box>
 
             <HeroSection />
+            <Box id="about">
+                <AboutSection />
+            </Box>
+
             <Box id="professions">
                 <ProfessionsSection />
             </Box>
