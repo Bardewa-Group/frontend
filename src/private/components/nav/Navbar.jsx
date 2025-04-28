@@ -47,17 +47,24 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
     useEffect(() => {
         if (!user) return;
 
-        // Load seen notifications from localStorage at first
+        // 1. First Load seenNotificationIds
         const stored = JSON.parse(localStorage.getItem('seenNotifications') || "[]");
-        setSeenNotificationIds(new Set(stored));
+        const seenIdsSet = new Set(stored);
+        setSeenNotificationIds(seenIdsSet);
 
-        fetchNotifications();
-        const interval = setInterval(fetchNotifications, 5000);
+        // 2. Then call fetch after slight delay (to ensure state updates)
+        setTimeout(() => {
+            fetchNotifications(seenIdsSet);
+        }, 100); // tiny delay ensures clean loading
+
+        const interval = setInterval(() => fetchNotifications(seenIdsSet), 5000);
 
         return () => clearInterval(interval);
+
     }, [user, authConfig]);
 
-    const fetchNotifications = async () => {
+
+    const fetchNotifications = async (currentSeenIds) => {
         try {
             let res;
             let latestData = [];
@@ -74,7 +81,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
             let newCount = 0;
 
             for (let id of latestIds) {
-                if (!seenNotificationIds.has(id)) {
+                if (!currentSeenIds.has(id)) {
                     newCount++;
                 }
             }
@@ -86,6 +93,7 @@ const Navbar = ({ isSidebarOpen, setIsSidebarOpen }) => {
             displayError(err.message || 'Failed to fetch notifications');
         }
     };
+
 
     const handleBellClick = (event) => {
         setAnchorEl(event.currentTarget);
