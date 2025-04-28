@@ -31,7 +31,9 @@ const RequestList = () => {
     const [actionLoading, setActionLoading] = useState(null);
 
     useEffect(() => {
-        (async () => {
+        let interval;
+
+        const fetchRequests = async () => {
             try {
                 const { data } = await axios.get(config.request_to_me, authConfig);
                 setRequests(data);
@@ -40,8 +42,15 @@ const RequestList = () => {
             } finally {
                 setLoading(false);
             }
-        })();
+        };
+
+        fetchRequests(); // First fetch immediately
+
+        interval = setInterval(fetchRequests, 10000); // then every 10 seconds
+
+        return () => clearInterval(interval); // Clear interval when component unmounts
     }, [authConfig]);
+
 
     const handleResponse = async (reqId, status) => {
         setActionLoading(reqId);

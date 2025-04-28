@@ -45,8 +45,15 @@ const AcceptedHires = () => {
     };
 
     useEffect(() => {
-        fetchHires();
+        let interval;
+
+        fetchHires(); // First fetch immediately
+
+        interval = setInterval(fetchHires, 10000); // Fetch every 10 seconds
+
+        return () => clearInterval(interval); // Clear interval when component unmounts
     }, [authConfig]);
+
 
     const handlePay = async (requestId) => {
         try {
